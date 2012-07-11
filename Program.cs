@@ -5,6 +5,7 @@ using System.IO;
 using HiGames;
 using System.Net;
 using System.Diagnostics;
+using System.Reflection;
 using HiToText.Utils;
 using HiToText.HXML;
 using HiToText.Generic;
@@ -21,9 +22,9 @@ namespace HiToText
         public static HXMLReader r = new HXMLReader();
 
 #if DEBUG
-        public const string HTT_XML = @"E:\Stuff\Nick Test\SVN\hitotext\HiToText.xml";
+        public static const string HTT_XML = @"E:\Stuff\Nick Test\SVN\hitotext\HiToText.xml";
 #else
-        public const string HTT_XML = "HiToText.xml";
+        public static string HTT_XML = "HiToText.xml";
 #endif
 
         #region SERVER PATHS
@@ -286,10 +287,15 @@ namespace HiToText
 
         private static void Initialize(ConsoleFlags flag, string romName)
         {
+	    // Figure out what folder we reside in and update XML doc location
+	    string exeLocation = Assembly.GetExecutingAssembly().Location;
+	    exeLocation = exeLocation.Substring(0, exeLocation.LastIndexOf(System.IO.Path.DirectorySeparatorChar)+1);
+	    HTT_XML = String.Concat(exeLocation,HTT_XML);
             //Do a fast initalize for a legacy read.
             if (flag.Equals(ConsoleFlags.ReadAll) || flag.Equals(ConsoleFlags.Read))
             {
-                XPathDocument docNav = new XPathDocument(HTT_XML);
+		System.Console.WriteLine(HTT_XML);                
+		XPathDocument docNav = new XPathDocument(HTT_XML);
                 XPathNavigator nav = docNav.CreateNavigator();
                 string strExpression =
                     string.Format("/HiToText/Entry[Header/Games/Name=\"{0}\"]", romName);
