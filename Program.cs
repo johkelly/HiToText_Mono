@@ -24,7 +24,7 @@ namespace HiToText
 #if DEBUG
         public static const string HTT_XML = @"E:\Stuff\Nick Test\SVN\hitotext\HiToText.xml";
 #else
-        public static string HTT_XML = "HiToText.xml";
+        public static string HTT_XML = "/etc/sdlmame/HiToText.xml";
 #endif
 
         #region SERVER PATHS
@@ -287,14 +287,6 @@ namespace HiToText
 
         private static void Initialize(ConsoleFlags flag, string romName)
         {
-	    // Figure out what folder we reside in and update XML doc location
-	    string exeLocation = Assembly.GetExecutingAssembly().Location;
-	    exeLocation = exeLocation.Substring(0, exeLocation.LastIndexOf(System.IO.Path.DirectorySeparatorChar)+1);
-	    HTT_XML = String.Concat(exeLocation,HTT_XML);
-            //Do a fast initalize for a legacy read.
-            if (flag.Equals(ConsoleFlags.ReadAll) || flag.Equals(ConsoleFlags.Read))
-            {
-		System.Console.WriteLine(HTT_XML);                
 		XPathDocument docNav = new XPathDocument(HTT_XML);
                 XPathNavigator nav = docNav.CreateNavigator();
                 string strExpression =
@@ -302,11 +294,12 @@ namespace HiToText
                 XPathNodeIterator NodeIter = nav.Select(strExpression);
                 NodeIter.MoveNext();
 
+
 		if(NodeIter.Current != null)
 		{
                 	r = new HXMLReader(NodeIter.Current);
 		}
-            }
+            
             else
             {
                 //Load up XML file
